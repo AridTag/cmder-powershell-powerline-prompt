@@ -1,5 +1,7 @@
 ﻿# Use this file to run your own startup commands
 
+. $PSScriptRoot\WriteRgb.ps1
+
 #######################################
 #         Prompt Customization
 #######################################
@@ -19,7 +21,7 @@
 function Import-GitModule($Loaded){
     if($Loaded) { return }
     $GitModule = Get-Module -Name Posh-Git -ListAvailable
-    if($GitModule | Select-Object version | Where-Object version -le ([version]"0.6.1.20160330")){
+    if($GitModule | Select-Object version | Where-Object version -le ([version]"0.7.1")){
         Import-Module Posh-Git > $null
     }
     if(-not ($GitModule) ) {
@@ -33,17 +35,22 @@ function Import-GitModule($Loaded){
 
 $isGitLoaded = $false
 #Anonymice Powerline
-$arrowSymbol = [char]0xE0B0;
-$branchSymbol = [char]0xE0A0;
+$arrowSymbol = [char]0xE0B0
+$branchSymbol = [char]0xE0A0
 
-$defaultForeColor = "White"
-$defaultBackColor = "Black"
-$pathForeColor = "White"
-$pathBackColor = "DarkBlue"
-$gitCleanForeColor = "White"
-$gitCleanBackColor = "Green"
-$gitDirtyForeColor = "Black"
-$gitDirtyBackColor = "Yellow"
+$branchAheadSymbol = [char]0x2191 # up arrow
+$branchAheadColor = [RGB]::new(0, 255, 0)
+$branchBehindSymbol = [char]0x2193 # down arrow
+$branchBehindcolor = [RGB]::new(255, 0, 0)
+
+$defaultForeColor = [RGB]::new(255, 255, 255)
+$defaultBackColor = [RGB]::new(0,0,0)
+$pathForeColor = [RGB]::new(0, 0, 0)#"White"
+$pathBackColor = [RGB]::new(0, 0, 128)#"DarkBlue"
+$gitCleanForeColor = [RGB]::new(255, 255, 255) #"White"
+$gitCleanBackColor = [RGB]::new(0, 128, 0)#"DarkGreen"
+$gitDirtyForeColor = [RGB]::new(0, 0, 0) #"Black"
+$gitDirtyBackColor = [RGB]::new(255, 250, 205) #"Yellow"
 
 function Write-GitPrompt() {
     $status = Get-GitStatus
@@ -60,11 +67,21 @@ function Write-GitPrompt() {
         }
 
         # Close path prompt
-        Write-Host $arrowSymbol -NoNewLine -BackgroundColor $gitBackColor -ForegroundColor $pathBackColor
+        Write-RGB $arrowSymbol -NoNewLine -BackgroundColor $gitBackColor -ForegroundColor $pathBackColor
 
         # Write branch symbol and name
-        $branchString = [string]::Format(" {0} {1} ", $branchSymbol, $status.Branch)
-        Write-Host $branchString -NoNewLine -BackgroundColor $gitBackColor -ForegroundColor $gitForeColor
+        $branchString = [string]::Format(" {0} {1} ",$branchSymbol, $status.Branch)
+        Write-RGB $branchString -NoNewLine -BackgroundColor $gitBackColor -ForegroundColor $gitForeColor
+
+        if($status.AheadBy -gt 0) {
+            $aheadByString = [string]::Format("{0} {1} ", $branchAheadSymbol, $status.AheadBy)
+            Write-RGB $aheadByString -NoNewline -BackgroundColor $gitBackColor -ForegroundColor $branchAheadColor
+        }
+
+        if($status.BehindBy -gt 0) {
+            $behindByString = [string]::Format("{0} {1} ", $branchBehindSymbol, $status.BehindBy)
+            Write-RGB $behindByString -NoNewline -BackgroundColor $gitBackColor -ForegroundColor $branchBehindColor
+        }
 
         <# Git status info
         HasWorking   : False
@@ -81,7 +98,7 @@ function Write-GitPrompt() {
         #>
 
         # close git prompt
-        Write-Host $arrowSymbol -NoNewLine -BackgroundColor $defaultBackColor -ForegroundColor $gitBackColor
+        Write-RGB $arrowSymbol -NoNewLine -BackgroundColor $defaultBackColor -ForegroundColor $gitBackColor
     }
 }
 
@@ -96,7 +113,7 @@ function getGitStatus($Path) {
         getGitStatus($SplitPath)
     }
     else{
-      Write-Host $arrowSymbol -NoNewLine -ForegroundColor $pathBackColor
+      Write-RGB $arrowSymbol -NoNewLine -ForegroundColor $pathBackColor -BackgroundColor $defaultBackColor
     }
 }
 
@@ -106,9 +123,8 @@ function tildaPath($Path) {
 
 # Replace the cmder prompt entirely with this.
 [ScriptBlock]$CmderPrompt = {
-    $tp = tildaPath($pwd.ProviderPath)
-    $pathString = [string]::Format("`n{0} ", $tp)
-    Microsoft.PowerShell.Utility\Write-Host $pathString -NoNewLine -BackgroundColor $pathBackColor -ForegroundColor $pathForeColor
+    $tp = [string]::Format("`n{0} ", $(tildaPath($pwd.ProviderPath)))
+    Write-RGB $tp -NoNewLine -BackgroundColor $pathBackColor -ForegroundColor $pathForeColor
 
     getGitStatus($pwd.ProviderPath)
 }
