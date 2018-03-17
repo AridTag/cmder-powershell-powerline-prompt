@@ -32,11 +32,13 @@ function Import-GitModule($Loaded){
 
 
 $isGitLoaded = $false
+
 #SauceCodePro Nerdfonts complete
 $arrowSymbol = [char]0xE0B0;
 $branchSymbol = [char]0xF418;
 $aheadBySymbol = [char]0xF0AA; # Up arrow
 $behindBySymbol = [char]0xF0AB; # Down arrow
+$gitSymbol = [char]0xFBD9;
 
 $defaultForeColor = "White"
 $defaultBackColor = "Black"
@@ -63,6 +65,9 @@ function Write-GitPrompt() {
 
         # Close path prompt
         Write-Host $arrowSymbol -NoNewLine -BackgroundColor $gitBackColor -ForegroundColor $pathBackColor
+
+        # Write vcs symbol
+        Write-Host ([string]::Format(" {0}", $gitSymbol)) -NoNewline -BackgroundColor $gitBackColor -ForegroundColor $gitForeColor
 
         # Write branch symbol and name
         $branchString = [string]::Format(" {0} {1} ", $branchSymbol, $status.Branch)
