@@ -32,12 +32,11 @@ function Import-GitModule($Loaded){
 
 
 $isGitLoaded = $false
-#Anonymice Powerline
+#SauceCodePro Nerdfonts complete
 $arrowSymbol = [char]0xE0B0;
-$branchSymbol = [char]0xE0A0;
-$aheadBySymbol = [char]0x2191; #↑ Up arrow
-$behindBySymbol = [char]0x2193; #↓ Down arrow
-$aheadAndBehindBySymbol = [char] #↕ Up and Down arrow
+$branchSymbol = [char]0xF418;
+$aheadBySymbol = [char]0xF0AA; # Up arrow
+$behindBySymbol = [char]0xF0AB; # Down arrow
 
 $defaultForeColor = "White"
 $defaultBackColor = "Black"
@@ -72,7 +71,7 @@ function Write-GitPrompt() {
 		
 		
 		if($status.AheadBy -ge 1 -and $status.BehindBy -ge 1) {
-			$aheadAndBehindString = [string]::Format("{0} {1} {2}", $status.AheadBy, $aheadAndBehindBySymbol, $status.BehindBy)
+			$aheadAndBehindString = [string]::Format("{0}{1} {2}{3}", $aheadBySymbol, $status.AheadBy, $behindBySymbol, $status.BehindBy)
 			Write-Host $aheadAndBehindString -NoNewline -BackgroundColor $gitBackColor -ForegroundColor $gitForeColor
         } elseif ($status.AheadBy -ge 1) {
             $aheadString = [string]::Format("{0}{1}", $aheadBySymbol, $status.AheadBy)
