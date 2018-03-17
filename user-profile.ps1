@@ -35,12 +35,15 @@ $isGitLoaded = $false
 #Anonymice Powerline
 $arrowSymbol = [char]0xE0B0;
 $branchSymbol = [char]0xE0A0;
+$aheadBySymbol = [char]0x2191; #↑ Up arrow
+$behindBySymbol = [char]0x2193; #↓ Down arrow
+$aheadAndBehindBySymbol = [char] #↕ Up and Down arrow
 
 $defaultForeColor = "White"
 $defaultBackColor = "Black"
 $pathForeColor = "White"
 $pathBackColor = "DarkBlue"
-$gitCleanForeColor = "White"
+$gitCleanForeColor = "Black"
 $gitCleanBackColor = "Green"
 $gitDirtyForeColor = "Black"
 $gitDirtyBackColor = "Yellow"
@@ -65,6 +68,20 @@ function Write-GitPrompt() {
         # Write branch symbol and name
         $branchString = [string]::Format(" {0} {1} ", $branchSymbol, $status.Branch)
         Write-Host $branchString -NoNewLine -BackgroundColor $gitBackColor -ForegroundColor $gitForeColor
+		
+		
+		
+		if($status.AheadBy -ge 1 -and $status.BehindBy -ge 1) {
+			$aheadAndBehindString = [string]::Format("{0} {1} {2}", $status.AheadBy, $aheadAndBehindBySymbol, $status.BehindBy)
+			Write-Host $aheadAndBehindString -NoNewline -BackgroundColor $gitBackColor -ForegroundColor $gitForeColor
+        } elseif ($status.AheadBy -ge 1) {
+            $aheadString = [string]::Format("{0}{1}", $aheadBySymbol, $status.AheadBy)
+            Write-Host $aheadString -NoNewline -BackgroundColor $gitBackColor -ForegroundColor $gitForeColor
+        } elseif ($status.BehindBy -ge 1) {
+            $behindString = [string]::Format("{0}{1}", $behindBySymbol, $status.BehindBy)
+            Write-Host $behindString -NoNewline -BackgroundColor $gitBackColor -ForegroundColor $gitForeColor
+        }
+        
 
         <# Git status info
         HasWorking   : False
@@ -81,7 +98,8 @@ function Write-GitPrompt() {
         #>
 
         # close git prompt
-        Write-Host $arrowSymbol -NoNewLine -BackgroundColor $defaultBackColor -ForegroundColor $gitBackColor
+        $endPromptString = [string]::Format("{0}", $arrowSymbol)
+        Write-Host $endPromptString -NoNewLine -BackgroundColor $defaultBackColor -ForegroundColor $gitBackColor
     }
 }
 
