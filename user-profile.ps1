@@ -74,23 +74,19 @@ function Write-GitPrompt() {
         Write-Host $arrowSymbol -NoNewLine -BackgroundColor $gitBackColor -ForegroundColor $pathBackColor
 
         # Write vcs symbol
-        Write-Host ([string]::Format(" {0}", $gitSymbol)) -NoNewline -BackgroundColor $gitBackColor -ForegroundColor $gitForeColor
+        Write-Host (" $($gitSymbol)") -NoNewline -BackgroundColor $gitBackColor -ForegroundColor $gitForeColor
 
         # Write branch symbol and name
-        $branchString = [string]::Format(" {0} {1} ", $branchSymbol, $status.Branch)
-        Write-Host $branchString -NoNewLine -BackgroundColor $gitBackColor -ForegroundColor $gitForeColor
+        Write-Host (" $($branchSymbol) $($status.Branch)") -NoNewLine -BackgroundColor $gitBackColor -ForegroundColor $gitForeColor
 		
 		
 		
 		if($status.AheadBy -ge 1 -and $status.BehindBy -ge 1) {
-			$aheadAndBehindString = [string]::Format("{0}{1} {2}{3}", $aheadBySymbol, $status.AheadBy, $behindBySymbol, $status.BehindBy)
-			Write-Host $aheadAndBehindString -NoNewline -BackgroundColor $gitBackColor -ForegroundColor $gitForeColor
+			Write-Host (" $($aheadBySymbol)$($aheadBySymbol)$($status.AheadBy)$($behindBySymbol)$($status.BehindBy)") -NoNewline -BackgroundColor $gitBackColor -ForegroundColor $gitForeColor
         } elseif ($status.AheadBy -ge 1) {
-            $aheadString = [string]::Format("{0}{1}", $aheadBySymbol, $status.AheadBy)
-            Write-Host $aheadString -NoNewline -BackgroundColor $gitBackColor -ForegroundColor $gitForeColor
+            Write-Host (" $($aheadBySymbol)$($status.AheadBy)") -NoNewline -BackgroundColor $gitBackColor -ForegroundColor $gitForeColor
         } elseif ($status.BehindBy -ge 1) {
-            $behindString = [string]::Format("{0}{1}", $behindBySymbol, $status.BehindBy)
-            Write-Host $behindString -NoNewline -BackgroundColor $gitBackColor -ForegroundColor $gitForeColor
+            Write-Host (" $($behindBySymbol)$($status.BehindBy)") -NoNewline -BackgroundColor $gitBackColor -ForegroundColor $gitForeColor
         }
 
         if($status.HasWorking) {
@@ -133,8 +129,7 @@ function Write-GitPrompt() {
         #>
 
         # close git prompt
-        $endPromptString = [string]::Format("{0}", $arrowSymbol)
-        Write-Host $endPromptString -NoNewLine -BackgroundColor $defaultBackColor -ForegroundColor $gitBackColor
+        Write-Host ("$($arrowSymbol)") -NoNewLine -BackgroundColor $defaultBackColor -ForegroundColor $gitBackColor
     }
 }
 
@@ -160,8 +155,7 @@ function tildaPath($Path) {
 # Replace the cmder prompt entirely with this.
 [ScriptBlock]$CmderPrompt = {
     $tp = tildaPath($pwd.ProviderPath)
-    $pathString = [string]::Format("`n{0} ", $tp)
-    Microsoft.PowerShell.Utility\Write-Host $pathString -NoNewLine -BackgroundColor $pathBackColor -ForegroundColor $pathForeColor
+    Microsoft.PowerShell.Utility\Write-Host ("`n$($tp) ") -NoNewLine -BackgroundColor $pathBackColor -ForegroundColor $pathForeColor
 
     getGitStatus($pwd.ProviderPath)
 }
