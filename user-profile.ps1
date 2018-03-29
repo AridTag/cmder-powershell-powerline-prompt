@@ -40,6 +40,13 @@ $aheadBySymbol = [char]0xF0AA; # Up arrow
 $behindBySymbol = [char]0xF0AB; # Down arrow
 $gitSymbol = [char]0xFBD9;
 
+$fileAddedSymbol = "+";
+$fileModifiedSymbol = "~";
+$fileDeletedSymbol = "-";
+
+$localWorkingStatusSymbol = '!'
+$localStagedStatusSymbol = '~'
+
 $defaultForeColor = "White"
 $defaultBackColor = "Black"
 $pathForeColor = "White"
@@ -84,6 +91,30 @@ function Write-GitPrompt() {
         } elseif ($status.BehindBy -ge 1) {
             $behindString = [string]::Format("{0}{1}", $behindBySymbol, $status.BehindBy)
             Write-Host $behindString -NoNewline -BackgroundColor $gitBackColor -ForegroundColor $gitForeColor
+        }
+
+        if($status.HasWorking) {
+            if($status.Working.Added) {
+                Write-Host (" $($fileAddedSymbol)$($status.Working.Added.Count)") -NoNewline -BackgroundColor $gitBackColor -ForegroundColor $gitForeColor
+            }
+            if($status.Working.Modified) {
+                Write-Host (" $($fileModifiedSymbol)$($status.Working.Modified.Count)") -NoNewline -BackgroundColor $gitBackColor -ForegroundColor $gitForeColor
+            }
+            if($status.Working.Deleted) {
+                Write-Host (" $($fileDeletedSymbol)$($status.Working.Deleted.Count)") -NoNewline -BackgroundColor $gitBackColor -ForegroundColor $gitForeColor
+            }
+        }
+
+        if($status.HasWorking) {
+            # un-staged files in the working tree
+            $localStatusSymbol = $localWorkingStatusSymbol
+        } elseif($status.HasIndex) {
+            # staged but uncomitted files
+            $localStatusSymbol = $localStagedStatusSymbol
+        }
+
+        if($localStatusSymbol) {
+            Write-Host (" $($localStatusSymbol)") -NoNewline -BackgroundColor $gitBackColor -ForegroundColor $gitForeColor
         }
         
 
