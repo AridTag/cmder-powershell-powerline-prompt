@@ -55,6 +55,8 @@ $gitCleanForeColor = "Black"
 $gitCleanBackColor = "Green"
 $gitDirtyForeColor = "Black"
 $gitDirtyBackColor = "Yellow"
+$gitMergeConflictBackColor = "Red"
+$gitMergeConflictForeColor = "Black"
 
 function Write-GitPrompt() {
     $status = Get-GitStatus
@@ -64,7 +66,11 @@ function Write-GitPrompt() {
         # assume git folder is clean
         $gitBackColor = $gitCleanBackColor
         $gitForeColor = $gitCleanForeColor
-        if ($status.HasWorking -Or $status.HasIndex) {
+
+        if($status.HasIndex -And $status.Index.Unmerged) {
+            $gitBackColor = $gitMergeConflictBackColor
+            $gitForeColor = $gitMergeConflictForeColor
+        } elseif ($status.HasWorking -Or $status.HasIndex) {
             # but if it's dirty, change the back color
             $gitBackColor = $gitDirtyBackColor
             $gitForeColor = $gitDirtyForeColor
@@ -78,9 +84,7 @@ function Write-GitPrompt() {
 
         # Write branch symbol and name
         Write-Host (" $($branchSymbol) $($status.Branch)") -NoNewLine -BackgroundColor $gitBackColor -ForegroundColor $gitForeColor
-		
-		
-		
+				
 		if($status.AheadBy -ge 1 -and $status.BehindBy -ge 1) {
 			Write-Host (" $($aheadBySymbol)$($aheadBySymbol)$($status.AheadBy)$($behindBySymbol)$($status.BehindBy)") -NoNewline -BackgroundColor $gitBackColor -ForegroundColor $gitForeColor
         } elseif ($status.AheadBy -ge 1) {
