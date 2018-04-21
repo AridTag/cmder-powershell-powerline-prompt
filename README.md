@@ -1,3 +1,5 @@
+This is a fork of https://github.com/AmrEldib/cmder-powershell-powerline-prompt  
+
 # cmder-powershell-powerline-prompt
 
 Custom prompt (and other configurations) for PowerShell in [Cmder](http://cmder.net/).  
