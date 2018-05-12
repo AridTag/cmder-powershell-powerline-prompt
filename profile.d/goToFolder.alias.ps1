@@ -8,7 +8,7 @@ function Set-TargetFolder() {
             $paramDictionary = New-Object System.Management.Automation.RuntimeDefinedParameterDictionary
             $attributeCollection = New-Object System.Collections.ObjectModel.Collection[System.Attribute]
             
-            $parameterName = 'folderToAlias'
+            $parameterName = 'folderAlias'
             $parameterAttribute = New-Object System.Management.Automation.ParameterAttribute
             $parameterAttribute.Mandatory = $true
             $parameterAttribute.Position = 0
@@ -25,7 +25,7 @@ function Set-TargetFolder() {
         }
 
         begin {
-            $folderAlias = $PSBoundParameters[$ParameterName]
+            $folderAlias = $PSBoundParameters[$parameterName]
         }
 
         process {
