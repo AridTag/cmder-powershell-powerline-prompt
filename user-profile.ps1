@@ -39,6 +39,7 @@ $branchSymbol = [char]0xF418;
 $aheadBySymbol = [char]0xF0AA; # Up arrow
 $behindBySymbol = [char]0xF0AB; # Down arrow
 $gitSymbol = [char]0xFBD9;
+$gitStashSymbol = [char]0xF192;
 
 $fileAddedSymbol = "+";
 $fileModifiedSymbol = "~";
@@ -84,7 +85,7 @@ function Write-GitPrompt() {
 
         # Write branch symbol and name
         Write-Host (" $($branchSymbol) $($status.Branch)") -NoNewLine -BackgroundColor $gitBackColor -ForegroundColor $gitForeColor
-				
+
 		if($status.AheadBy -ge 1 -and $status.BehindBy -ge 1) {
 			Write-Host (" $($aheadBySymbol)$($aheadBySymbol)$($status.AheadBy)$($behindBySymbol)$($status.BehindBy)") -NoNewline -BackgroundColor $gitBackColor -ForegroundColor $gitForeColor
         } elseif ($status.AheadBy -ge 1) {
@@ -105,6 +106,11 @@ function Write-GitPrompt() {
             }
         }
 
+        $stashPath = Join-Path $pwd.ProviderPath -ChildPath ".git\logs\refs\stash";
+        if(Test-Path $stashPath -PathType Leaf) {
+            Write-Host (" $($gitStashSymbol)") -NoNewline -BackgroundColor $gitBackColor -ForegroundColor $gitForeColor
+        }
+
         if($status.HasWorking) {
             # un-staged files in the working tree
             $localStatusSymbol = $localWorkingStatusSymbol
@@ -116,7 +122,6 @@ function Write-GitPrompt() {
         if($localStatusSymbol) {
             Write-Host (" $($localStatusSymbol)") -NoNewline -BackgroundColor $gitBackColor -ForegroundColor $gitForeColor
         }
-        
 
         <# Git status info
         HasWorking   : False
